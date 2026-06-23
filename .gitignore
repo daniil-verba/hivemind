@@ -1,0 +1,152 @@
+# ============================================
+# BUILD DIRECTORIES
+# ============================================
+build/
+build-*/
+cmake-build-*/
+out/
+bin/
+lib/
+
+# ============================================
+# CMAKE GENERATED FILES
+# ============================================
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+CMakeCache.txt
+*.cmake
+!CMakeLists.txt
+!*.cmake.in
+
+# ============================================
+# COMPILED OBJECTS & LIBRARIES
+# ============================================
+*.o
+*.obj
+*.a
+*.so
+*.so.*
+*.dylib
+*.dll
+*.dylib
+*.exe
+*.out
+*.app
+
+# ============================================
+# COMPILER GENERATED
+# ============================================
+*.d
+*.dep
+*.gcda
+*.gcno
+*.gcov
+
+# ============================================
+# IDE FILES
+# ============================================
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+*.kate-swp
+*.user
+*.user.*
+*.creator.user*
+*.creator.user.*
+*.files
+*.includes
+*.config
+*.creator
+
+# CLion
+.idea/
+cmake-build-*/
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# ============================================
+# ARCHIVES & PACKAGES
+# ============================================
+*.zip
+*.tar.gz
+*.tar.bz2
+*.7z
+*.rar
+*.deb
+*.rpm
+*.pkg
+*.dmg
+
+# ============================================
+# TEMPORARY FILES
+# ============================================
+*.tmp
+*.log
+*.bak
+*.backup
+*.cache
+*.pid
+
+# ============================================
+# TESTING & COVERAGE
+# ============================================
+*.test
+*.cov
+coverage/
+htmlcov/
+*.gcov
+
+# ============================================
+# DOCUMENTATION (if auto-generated)
+# ============================================
+docs/_build/
+docs/html/
+docs/latex/
+docs/man/
+docs/doctrees/
+
+# ============================================
+# DEPENDENCY MANAGEMENT
+# ============================================
+# vcpkg
+vcpkg_installed/
+vcpkg-manifest-install/
+
+# conan
+conaninfo.txt
+conanbuildinfo.*
+conan.lock
+
+# ============================================
+# SPECIFIC TO THIS PROJECT
+# ============================================
+
+# These are the key ones - don't commit compiled library!
+libhivemind.so
+libhivemind.dylib
+libhivemind.dll
+
+# Don't commit the C API wrapper if it's generated
+hivemind.cpp.o
+hivemind.cpp.o.d
+
+# Don't commit any test binaries
+test/
+tests/
+*_test
+*_tests
+
+# ============================================
+# MISC
+# ============================================
+*.orig
+*.rej
+*.patch
+*.diff

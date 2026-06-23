@@ -1,0 +1,123 @@
+.
+├── build
+│   ├── CMakeCache.txt
+│   ├── CMakeFiles
+│   │   ├── 4.3.3
+│   │   │   ├── CMakeCCompiler.cmake
+│   │   │   ├── CMakeCXXCompiler.cmake
+│   │   │   ├── CMakeDetermineCompilerABI_C.bin
+│   │   │   ├── CMakeDetermineCompilerABI_CXX.bin
+│   │   │   ├── CMakeSystem.cmake
+│   │   │   ├── CompilerIdC
+│   │   │   │   ├── a.out
+│   │   │   │   ├── CMakeCCompilerId.c
+│   │   │   │   └── tmp
+│   │   │   └── CompilerIdCXX
+│   │   │       ├── a.out
+│   │   │       ├── CMakeCXXCompilerId.cpp
+│   │   │       └── tmp
+│   │   ├── cmake.check_cache
+│   │   ├── CMakeConfigureLog.yaml
+│   │   ├── CMakeDirectoryInformation.cmake
+│   │   ├── CMakeScratch
+│   │   ├── hivemind.dir
+│   │   │   ├── build.make
+│   │   │   ├── cmake_clean.cmake
+│   │   │   ├── compiler_depend.make
+│   │   │   ├── compiler_depend.ts
+│   │   │   ├── DependInfo.cmake
+│   │   │   ├── depend.make
+│   │   │   ├── flags.make
+│   │   │   ├── link.d
+│   │   │   ├── link.txt
+│   │   │   ├── progress.make
+│   │   │   └── src
+│   │   │       ├── core
+│   │   │       │   ├── Hivemind.cpp.o
+│   │   │       │   └── Hivemind.cpp.o.d
+│   │   │       ├── hivemind.cpp.o
+│   │   │       ├── hivemind.cpp.o.d
+│   │   │       └── network
+│   │   │           ├── Transport.cpp.o
+│   │   │           └── Transport.cpp.o.d
+│   │   ├── InstallScripts.json
+│   │   ├── Makefile2
+│   │   ├── Makefile.cmake
+│   │   ├── pkgRedirects
+│   │   ├── progress.marks
+│   │   └── TargetDirectories.txt
+│   ├── cmake_install.cmake
+│   ├── libhivemind.so
+│   └── Makefile
+├── CMakeLists.txt
+├── CODE_OF_CONDUCT.md
+├── CONTRIBUTING.md
+├── docs
+│   ├── api
+│   │   └── hivemind.md
+│   ├── command.md
+│   ├── Command.txt
+│   ├── development
+│   ├── examples
+│   │   └── messenger.md
+│   ├── getting_started.md
+│   └── index.md
+├── include
+│   └── hivemind
+│       ├── api.h
+│       ├── callbacks.h
+│       ├── hivemind.h
+│       ├── types.h
+│       └── version.h
+├── LICENSE
+├── README.md
+├── src
+│   ├── core
+│   │   ├── Constants.hpp
+│   │   ├── Hivemind.cpp
+│   │   ├── Hivemind.hpp
+│   │   ├── NodeID.cpp
+│   │   └── NodeID.hpp
+│   ├── crypto
+│   │   ├── Crypto.cpp
+│   │   ├── Crypto.hpp
+│   │   ├── KeyExchange.cpp
+│   │   └── KeyExchange.hpp
+│   ├── dht
+│   │   ├── Kademlia.cpp
+│   │   ├── Kademlia.hpp
+│   │   ├── RoutingTable.cpp
+│   │   ├── RoutingTable.hpp
+│   │   ├── Storage.cpp
+│   │   └── Storage.hpp
+│   ├── hivemind.cpp
+│   ├── main.cpp
+│   ├── network
+│   │   ├── Listener.cpp
+│   │   ├── Listener.hpp
+│   │   ├── PacketManager.cpp
+│   │   ├── PacketManager.hpp
+│   │   ├── Transport.cpp
+│   │   └── Transport.hpp
+│   ├── protocol
+│   │   ├── Commands.cpp
+│   │   ├── Commands.hpp
+│   │   ├── Parser.cpp
+│   │   └── Parser.hpp
+│   ├── storage
+│   │   ├── Config.cpp
+│   │   ├── Config.hpp
+│   │   ├── FriendsDB.cpp
+│   │   ├── FriendsDB.hpp
+│   │   ├── Queue.cpp
+│   │   └── Queue.hpp
+│   ├── Templates
+│   │   └── BinaryTree.hpp
+│   └── utils
+│       ├── Logger.cpp
+│       ├── Logger.hpp
+│       ├── Timer.cpp
+│       └── Timer.hpp
+└── struct_hivemind.txt
+
+29 directories, 92 files
