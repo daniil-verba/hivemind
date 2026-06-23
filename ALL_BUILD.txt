@@ -1,0 +1,21 @@
+#Чистим кэш
+rm -rf ~/Hivemind/Hivemind-lib/build
+rm -rf ~/Hivemind/Platform/ui/console/build
+
+#Создаём папки
+mkdir ~/Hivemind/Hivemind-lib/build
+mkdir ~/Hivemind/Platform/ui/console/build
+
+#Компилируем библиотеку
+cd ~/Hivemind/Hivemind-lib/build
+cmake ..
+make -j$(nproc)
+
+#Переносим библиотеку
+cp ~/Hivemind/Hivemind-lib/build/libhivemind.so ~/Hivemind/Platform/libs
+cp ~/Hivemind/Hivemind-lib/include/ ~/Hivemind/Platform/libs
+
+#Собираем платформу
+cd ~/Hivemind/Platform/ui/console/build
+cmake ..
+make -j$(nproc)
