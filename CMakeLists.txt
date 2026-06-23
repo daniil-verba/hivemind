@@ -8,7 +8,7 @@ set(SOURCES
     src/core/Hivemind.cpp
     src/network/Transport.cpp
     src/network/Stun.cpp
-    src/storage/UserRegistry.cpp
+    src/storage/SimpleRegistry.cpp
     src/hivemind.cpp
 )
 

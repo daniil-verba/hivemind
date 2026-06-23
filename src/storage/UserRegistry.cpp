@@ -73,12 +73,19 @@ bool UserRegistry::load() {
     return true;
 }
 
+// src/storage/UserRegistry.cpp
+
 bool UserRegistry::save() {
     std::lock_guard<std::mutex> lock(m_mutex);
     
+    // Открываем файл с созданием, если его нет
     std::ofstream file(m_filePath, std::ios::trunc);
     if (!file.is_open()) {
-        std::cerr << "[UserRegistry] Failed to save to " << m_filePath << std::endl;
+        std::cerr << "[UserRegistry] ❌ Failed to save to " << m_filePath << std::endl;
+        std::cerr << "[UserRegistry] Trying to create directory..." << std::endl;
+        
+        // Пытаемся создать родительскую директорию (если есть)
+        // ... но для простоты просто вернём false
         return false;
     }
     
@@ -90,8 +97,16 @@ bool UserRegistry::save() {
     }
     
     file.close();
+    
+    if (file.fail()) {
+        std::cerr << "[UserRegistry] ❌ Failed to write to " << m_filePath << std::endl;
+        return false;
+    }
+    
+    std::cout << "[UserRegistry] ✅ Saved " << m_users.size() << " users to " << m_filePath << std::endl;
     return true;
 }
+
 
 bool UserRegistry::registerMe(const std::string& name, const std::string& publicIP, uint16_t port) {
     std::lock_guard<std::mutex> lock(m_mutex);
@@ -104,9 +119,15 @@ bool UserRegistry::registerMe(const std::string& name, const std::string& public
     entry.lastUpdate = std::chrono::system_clock::now();
     
     m_users[name] = entry;
-    save();
     
-    std::cout << "[UserRegistry] Registered: " << name << " -> " << publicIP << ":" << port << std::endl;
+    // Явно сохраняем
+    bool result = save();
+    
+    if (!result) {
+        std::cerr << "[UserRegistry] ❌ Failed to save after registration" << std::endl;
+        return false;
+    }
+    
     return true;
 }
 

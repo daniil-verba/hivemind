@@ -7,7 +7,7 @@
 
 Hivemind::Hivemind() 
     : transport(std::make_unique<Transport>())
-    , registry(std::make_unique<UserRegistry>("all-users.pack"))
+    , registry(std::make_unique<SimpleRegistry>("users.txt"))
 {
     registry->load();
     
@@ -27,7 +27,6 @@ bool Hivemind::start(uint16_t port) {
         return false;
     }
     
-    // Определяем публичный IP через STUN
     m_myPublicIP = StunClient::getPublicIP();
     
     if (m_myPublicIP.empty()) {
@@ -62,56 +61,66 @@ bool Hivemind::receive(std::string& sender_ip, uint16_t& sender_port, std::strin
 }
 
 std::string Hivemind::getMyPublicIP() {
-    // Если уже есть — возвращаем
     if (!m_myPublicIP.empty()) {
         return m_myPublicIP;
     }
     
-    // Получаем через STUN
     m_myPublicIP = StunClient::getPublicIP();
     return m_myPublicIP;
 }
 
+// src/core/Hivemind.cpp
+
 bool Hivemind::registerName(const std::string& name) {
+    std::cout << "[Hivemind] registerName() called with: " << name << std::endl;
+    
     m_myName = name;
     
-    // Обновляем IP перед регистрацией
     m_myPublicIP = getMyPublicIP();
+    std::cout << "[Hivemind] Public IP: " << m_myPublicIP << std::endl;
     
     if (m_myPublicIP.empty()) {
         std::cerr << "[Hivemind] Cannot register: no public IP" << std::endl;
         return false;
     }
     
-    return registry->registerMe(name, m_myPublicIP, m_myPort);
+    std::cout << "[Hivemind] Calling registry->addUser()..." << std::endl;
+    bool result = registry->addUser(name, m_myPublicIP, m_myPort);
+    std::cout << "[Hivemind] registry->addUser() returned: " << result << std::endl;
+    
+    if (result) {
+        std::cout << "[Hivemind] ✅ Registered: " << name << " -> " 
+                  << m_myPublicIP << ":" << m_myPort << std::endl;
+        registry->printUsers();
+    } else {
+        std::cerr << "[Hivemind] ❌ Registration failed!" << std::endl;
+    }
+    
+    return result;
 }
 
-bool Hivemind::findUser(const std::string& name, UserEntry& entry) {
-    return registry->findUser(name, entry);
+bool Hivemind::findUser(const std::string& name, SimpleUser& user) {
+    return registry->findUser(name, user);
 }
 
 bool Hivemind::sendToUser(const std::string& name, const std::string& message) {
-    UserEntry entry;
-    if (!findUser(name, entry)) {
+    SimpleUser user;
+    if (!findUser(name, user)) {
         std::cerr << "[Hivemind] User not found: " << name << std::endl;
         return false;
     }
     
-    return sendToIp(entry.publicIP, entry.port, message);
+    return sendToIp(user.ip, user.port, message);
 }
 
 void Hivemind::syncWithNetwork() {
-    // Обновляем IP перед синхронизацией
     m_myPublicIP = getMyPublicIP();
     
     if (!m_myName.empty() && !m_myPublicIP.empty()) {
-        registry->registerMe(m_myName, m_myPublicIP, m_myPort);
+        registry->addUser(m_myName, m_myPublicIP, m_myPort);
     }
     
-    registry->cleanupExpired();
-    
-    std::cout << "[Hivemind] Sync completed. " 
-              << registry->getAllUsers().size() << " users active" << std::endl;
+    registry->printUsers();
 }
 
 void Hivemind::startAutoSync(int intervalSeconds) {
@@ -122,16 +131,13 @@ void Hivemind::startAutoSync(int intervalSeconds) {
         while (m_autoSyncRunning) {
             std::this_thread::sleep_for(std::chrono::seconds(intervalSeconds));
             
-            // Проверяем, не изменился ли IP
             std::string newIP = StunClient::getPublicIP();
             if (!newIP.empty() && newIP != m_myPublicIP) {
                 m_myPublicIP = newIP;
                 if (!m_myName.empty()) {
-                    registry->registerMe(m_myName, m_myPublicIP, m_myPort);
+                    registry->addUser(m_myName, m_myPublicIP, m_myPort);
                 }
             }
-            
-            syncWithNetwork();
         }
     });
 }
