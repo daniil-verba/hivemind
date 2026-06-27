@@ -73,7 +73,7 @@ bool Transport::sendTo(const std::string& ip, uint16_t port, const std::string& 
         return true;
     } else {
         std::cerr << "[Transport] sendTo failed: sent " << sent << " of " << message.size() 
-                  << " bytes to " << ip << ":" << port << " (errno: " << errno << ")" << std::endl;
+                  << " bytes to " << ip << ":" << port << std::endl;
         return false;
     }
 }

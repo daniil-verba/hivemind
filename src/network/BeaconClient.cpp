@@ -16,14 +16,32 @@ void BeaconClient::setBeaconAddress(const std::string& ip, uint16_t port) {
 }
 
 bool BeaconClient::registerUsername(const std::string& username, const NodeInfo& myInfo, BeaconResponseCallback callback) {
-    if (!isConfigured() || !m_transport) return false;
+    std::cout << "[BeaconClient] registerUsername() called for: " << username << std::endl;
+    
+    if (!isConfigured()) {
+        std::cerr << "[BeaconClient] ERROR: not configured!" << std::endl;
+        return false;
+    }
+    if (!m_transport) {
+        std::cerr << "[BeaconClient] ERROR: transport is null!" << std::endl;
+        return false;
+    }
+    
+    std::cout << "[BeaconClient] Creating packet..." << std::endl;
     auto data = createRegisterUsernamePacket(username, myInfo);
+    std::cout << "[BeaconClient] Packet size: " << data.size() << " bytes" << std::endl;
+    
     m_pendingUsernameCallback = callback;
     m_waitingResponse = true;
     m_lastRequestTime = std::chrono::steady_clock::now();
+    
+    std::cout << "[BeaconClient] Sending to " << m_beaconIp << ":" << m_beaconPort << std::endl;
     bool sent = m_transport->sendTo(m_beaconIp, m_beaconPort, std::string(data.begin(), data.end()));
+    
     if (sent) {
-        std::cout << "[BeaconClient] Sent REGISTER_USERNAME for @" << username << std::endl;
+        std::cout << "[BeaconClient] ✓ Sent REGISTER_USERNAME for @" << username << std::endl;
+    } else {
+        std::cerr << "[BeaconClient] ✗ FAILED to send REGISTER_USERNAME!" << std::endl;
     }
     return sent;
 }
@@ -66,16 +84,24 @@ void BeaconClient::handlePacket(const Packet& pkt, const std::string& fromIp, ui
     if (fromIp != m_beaconIp || fromPort != m_beaconPort) return;
     switch (pkt.type) {
         case MsgType::USERNAME_RESPONSE: {
-            if (pkt.payload.size() < 1) return;
+            std::cout << "[BeaconClient] <<< GOT USERNAME_RESPONSE" << std::endl;
+            if (pkt.payload.size() < 1) {
+                std::cerr << "[BeaconClient] Empty USERNAME_RESPONSE" << std::endl;
+                return;
+            }
             bool found = (pkt.payload[0] != 0);
+            std::cout << "[BeaconClient] Result: " << (found ? "SUCCESS" : "FAILED") << std::endl;
             NodeInfo info{};
             if (found && pkt.payload.size() >= 159) {
                 deserializeNodeInfo(pkt.payload.data() + 1, pkt.payload.size() - 1, info);
             }
             m_waitingResponse = false;
             if (m_pendingUsernameCallback) {
+                std::cout << "[BeaconClient] Calling callback..." << std::endl;
                 m_pendingUsernameCallback(found, info);
                 m_pendingUsernameCallback = nullptr;
+            } else {
+                std::cout << "[BeaconClient] No pending callback!" << std::endl;
             }
             break;
         }

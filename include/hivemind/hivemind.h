@@ -49,11 +49,10 @@ int hivemind_send_via_relay(Hivemind* h, const char* to_username, const char* me
 int hivemind_is_beacon_configured(Hivemind* h);
 const char* hivemind_get_node_id(Hivemind* h);
 
-// Устаревшие
-int hivemind_register_username(Hivemind* h, const char* username);
-int hivemind_resolve_username(Hivemind* h, const char* username, char* ip, uint16_t* port);
-int hivemind_is_beacon_connected(Hivemind* h);
-int hivemind_request_bootstrap(Hivemind* h);
+typedef void (*HivemindMessageCallback)(const char* sender, const char* message);
+void hivemind_set_message_callback(Hivemind* h, HivemindMessageCallback callback);
+
+//OLD FUNCTIONS
 int hivemind_get_node_id_old(Hivemind* h, char* buffer, size_t buffer_size);
 void hivemind_add_anchor(Hivemind* h, const char* domain, uint16_t port);
 void hivemind_enable_upnp(Hivemind* h, int enable);

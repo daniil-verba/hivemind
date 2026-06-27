@@ -183,16 +183,22 @@ bool Hivemind::receive(std::string& ip, uint16_t& port, std::string& message) {
 }
 
 bool Hivemind::registerName(const std::string& name) {
+    std::cout << "[Hivemind] registerName() called with: " << name << std::endl;
+    
     std::string ipToUse = m_myPublicIP.empty() ? m_myLocalIP : m_myPublicIP;
     if (ipToUse.empty()) ipToUse = "127.0.0.1";
     
+    std::cout << "[Hivemind] Will use IP: " << ipToUse << ", Port: " << m_myPort << std::endl;
+    
     // Сохраняем локально
+    std::cout << "[Hivemind] Saving to local registry..." << std::endl;
     registry->addUser("", name, m_myNodeIdStr, ipToUse, m_myPort);
     m_myUsername = name;
+    std::cout << "[Hivemind] Local save OK" << std::endl;
     
-    // Если маяк настроен — отправляем регистрацию на маяк и ЖДЁМ ОТВЕТА
+    // Если маяк настроен — отправляем регистрацию на маяк (асинхронно)
     if (beaconClient->isConfigured()) {
-        std::cout << "[Hivemind] Sending registration to beacon..." << std::endl;
+        std::cout << "[Hivemind] Beacon configured, sending registration..." << std::endl;
         hivemind::NodeInfo info{};
         memcpy(info.nodeId, m_myNodeId, 20);
         strncpy(info.username, name.c_str(), 31);
@@ -204,38 +210,27 @@ bool Hivemind::registerName(const std::string& name) {
         info.port = m_myPort;
         info.timestamp = std::chrono::system_clock::now().time_since_epoch().count();
         
-        bool result = false;
-        bool completed = false;
-        beaconClient->registerUsername(name, info,
-            [&result, &completed](bool success, const hivemind::NodeInfo& nodeInfo) {
-                result = success;
-                completed = true;
+        bool sent = beaconClient->registerUsername(name, info,
+            [](bool success, const hivemind::NodeInfo& nodeInfo) {
                 if (success) {
-                    std::cout << "[Hivemind] Username registered on beacon successfully" << std::endl;
+                    std::cout << "\n\x1b[32m[Hivemind] ✓ Registered on beacon!\x1b[0m" << std::endl;
                 } else {
-                    std::cerr << "[Hivemind] Beacon registration failed (name taken?)" << std::endl;
+                    std::cerr << "\n\x1b[31m[Hivemind] ✗ Beacon registration failed (name taken?)\x1b[0m" << std::endl;
                 }
+                std::cout << "> " << std::flush;
             });
         
-        // Ждём ответа от маяка (макс 5 секунд)
-        std::cout << "[Hivemind] Waiting for beacon response..." << std::endl;
-        int timeout = 50; // 50 * 100ms = 5 секунд
-        while (!completed && timeout-- > 0) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        }
-        
-        if (!completed) {
-            std::cerr << "[Hivemind] ✗ Beacon timeout — no response from server" << std::endl;
-            std::cerr << "[Hivemind] Possible reasons: firewall on VPS, server not running, packet lost" << std::endl;
+        if (!sent) {
+            std::cerr << "[Hivemind] ✗ Failed to send registration packet" << std::endl;
             return false;
         }
         
-        if (result) {
-            std::cout << "[Hivemind] ✓ Registration complete!" << std::endl;
-        }
-        return result;
+        std::cout << "[Hivemind] ✓ Registration packet sent to beacon!" << std::endl;
+        std::cout << "[Hivemind] Waiting for beacon response (check /pack in 2-3 sec)..." << std::endl;
+        return true;
     }
     
+    std::cout << "[Hivemind] No beacon configured, local only." << std::endl;
     return true;
 }
 
@@ -423,6 +418,13 @@ void Hivemind::processIncomingPacket(const hivemind::Packet& pkt,
     beaconClient->handlePacket(pkt, fromIp, fromPort);
     
     switch (pkt.type) {
+        case hivemind::MsgType::MESSAGE: {
+            std::string msg(pkt.payload.begin(), pkt.payload.end());
+            if (m_messageCallback) {
+                m_messageCallback(fromIp + ":" + std::to_string(fromPort), msg);
+            }
+            break;
+        }
         case hivemind::MsgType::PING: {
             hivemind::Packet response;
             response.type = hivemind::MsgType::PONG;
@@ -513,7 +515,7 @@ void Hivemind::processIncomingPacket(const hivemind::Packet& pkt,
                 }
             }
             
-            std::cout << "\\n\\x1b[35m[Relay from " << fromName << " (" << fromNodeId.substr(0, 8) << "...)]:\\x1b[0m " 
+            std::cout << "\n\x1b[35m[Relay from " << fromName << " (" << fromNodeId.substr(0, 8) << "...)]:\x1b[0m " 
                       << message << std::endl;
             std::cout << "> " << std::flush;
             

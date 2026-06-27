@@ -154,6 +154,15 @@ const char* hivemind_get_node_id(Hivemind* h) {
     return id.c_str();
 }
 
+// === CALLBACK ===
+
+void hivemind_set_message_callback(Hivemind* h, HivemindMessageCallback callback) {
+    if (!h || !callback) return;
+    h->setMessageCallback([callback](const std::string& sender, const std::string& message) {
+        callback(sender.c_str(), message.c_str());
+    });
+}
+
 // === УСТАРЕВШИЕ ФУНКЦИИ ===
 
 int hivemind_register_username(Hivemind* h, const char* username) {
