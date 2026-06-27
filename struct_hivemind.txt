@@ -1,4 +1,5 @@
 .
+├── ALL_BUILD.txt
 ├── build
 │   ├── CMakeCache.txt
 │   ├── CMakeFiles
@@ -28,7 +29,6 @@
 │   │   │   ├── DependInfo.cmake
 │   │   │   ├── depend.make
 │   │   │   ├── flags.make
-│   │   │   ├── link.d
 │   │   │   ├── link.txt
 │   │   │   ├── progress.make
 │   │   │   └── src
@@ -37,17 +37,76 @@
 │   │   │       │   └── Hivemind.cpp.o.d
 │   │   │       ├── hivemind.cpp.o
 │   │   │       ├── hivemind.cpp.o.d
-│   │   │       └── network
-│   │   │           ├── Transport.cpp.o
-│   │   │           └── Transport.cpp.o.d
+│   │   │       ├── network
+│   │   │       │   ├── Stun.cpp.o
+│   │   │       │   ├── Stun.cpp.o.d
+│   │   │       │   ├── Transport.cpp.o
+│   │   │       │   ├── Transport.cpp.o.d
+│   │   │       │   └── UPnP.cpp.o.d
+│   │   │       └── storage
+│   │   │           ├── SimpleRegistry.cpp.o
+│   │   │           └── SimpleRegistry.cpp.o.d
 │   │   ├── InstallScripts.json
 │   │   ├── Makefile2
 │   │   ├── Makefile.cmake
+│   │   ├── miniupnpc.dir
+│   │   │   ├── build.make
+│   │   │   ├── cmake_clean.cmake
+│   │   │   ├── cmake_clean_target.cmake
+│   │   │   ├── compiler_depend.make
+│   │   │   ├── compiler_depend.ts
+│   │   │   ├── DependInfo.cmake
+│   │   │   ├── depend.make
+│   │   │   ├── flags.make
+│   │   │   ├── link.txt
+│   │   │   ├── progress.make
+│   │   │   └── third_party
+│   │   │       └── miniupnpc
+│   │   │           └── src
+│   │   │               ├── connecthostport.c.o
+│   │   │               ├── connecthostport.c.o.d
+│   │   │               ├── minisoap.c.o
+│   │   │               ├── minisoap.c.o.d
+│   │   │               ├── minissdpc.c.o
+│   │   │               ├── minissdpc.c.o.d
+│   │   │               ├── miniupnpc.c.o
+│   │   │               ├── miniupnpc.c.o.d
+│   │   │               ├── miniwget.c.o
+│   │   │               ├── miniwget.c.o.d
+│   │   │               ├── portlistingparse.c.o
+│   │   │               ├── portlistingparse.c.o.d
+│   │   │               ├── receivedata.c.o
+│   │   │               ├── receivedata.c.o.d
+│   │   │               ├── upnpcommands.c.o
+│   │   │               ├── upnpcommands.c.o.d
+│   │   │               ├── upnperrors.c.o
+│   │   │               ├── upnperrors.c.o.d
+│   │   │               ├── upnpreplyparse.c.o
+│   │   │               └── upnpreplyparse.c.o.d
 │   │   ├── pkgRedirects
+│   │   ├── Progress
+│   │   │   ├── 1
+│   │   │   ├── 10
+│   │   │   ├── 11
+│   │   │   ├── 12
+│   │   │   ├── 13
+│   │   │   ├── 14
+│   │   │   ├── 15
+│   │   │   ├── 16
+│   │   │   ├── 17
+│   │   │   ├── 18
+│   │   │   ├── 2
+│   │   │   ├── 3
+│   │   │   ├── 4
+│   │   │   ├── 5
+│   │   │   ├── 6
+│   │   │   ├── 8
+│   │   │   ├── 9
+│   │   │   └── count.txt
 │   │   ├── progress.marks
 │   │   └── TargetDirectories.txt
 │   ├── cmake_install.cmake
-│   ├── libhivemind.so
+│   ├── libminiupnpc.a
 │   └── Makefile
 ├── CMakeLists.txt
 ├── CODE_OF_CONDUCT.md
@@ -97,8 +156,12 @@
 │   │   ├── Listener.hpp
 │   │   ├── PacketManager.cpp
 │   │   ├── PacketManager.hpp
+│   │   ├── Stun.cpp
+│   │   ├── Stun.hpp
 │   │   ├── Transport.cpp
-│   │   └── Transport.hpp
+│   │   ├── Transport.hpp
+│   │   ├── UPnP.cpp
+│   │   └── UPnP.hpp
 │   ├── protocol
 │   │   ├── Commands.cpp
 │   │   ├── Commands.hpp
@@ -110,7 +173,11 @@
 │   │   ├── FriendsDB.cpp
 │   │   ├── FriendsDB.hpp
 │   │   ├── Queue.cpp
-│   │   └── Queue.hpp
+│   │   ├── Queue.hpp
+│   │   ├── SimpleRegistry.cpp
+│   │   ├── SimpleRegistry.hpp
+│   │   ├── UserRegistry.cpp
+│   │   └── UserRegistry.hpp
 │   ├── Templates
 │   │   └── BinaryTree.hpp
 │   └── utils
@@ -118,6 +185,134 @@
 │       ├── Logger.hpp
 │       ├── Timer.cpp
 │       └── Timer.hpp
-└── struct_hivemind.txt
+├── struct_hivemind.txt
+└── third_party
+    └── miniupnpc
+        ├── apiversions.txt
+        ├── Changelog.txt
+        ├── CMakeLists.txt
+        ├── DESCRIPTION
+        ├── Doxyfile
+        ├── external-ip.sh
+        ├── include
+        │   ├── igd_desc_parse.h
+        │   ├── miniupnpc_declspec.h
+        │   ├── miniupnpc.h
+        │   ├── miniupnpctypes.h
+        │   ├── miniwget.h
+        │   ├── portlistingparse.h
+        │   ├── upnpcommands.h
+        │   ├── upnpdev.h
+        │   ├── upnperrors.h
+        │   └── upnpreplyparse.h
+        ├── java
+        │   ├── JavaBridgeTest.java
+        │   ├── testjava.bat
+        │   └── testjava.sh
+        ├── LICENSE -> ../LICENSE
+        ├── Makefile
+        ├── Makefile.mingw
+        ├── man3
+        │   └── miniupnpc.3
+        ├── MANIFEST.in
+        ├── mingw32make.bat
+        ├── miniupnpc-config.cmake
+        ├── miniupnpc.def
+        ├── miniupnpc.pc.in
+        ├── miniupnpc.rc
+        ├── miniupnpcstrings.h
+        ├── miniupnpcstrings.h.cmake
+        ├── miniupnpcstrings.h.in
+        ├── msvc
+        │   ├── genminiupnpcstrings.vbs
+        │   ├── miniupnpc.sln
+        │   ├── miniupnpc.vcproj
+        │   ├── miniupnpc.vcxproj
+        │   ├── miniupnpc.vcxproj.filters
+        │   ├── miniupnpc_vs2010.sln
+        │   ├── miniupnpc_vs2010.vcxproj
+        │   ├── miniupnpc_vs2010.vcxproj.filters
+        │   ├── miniupnpc_vs2015.sln
+        │   ├── upnpc-static.vcproj
+        │   ├── upnpc-static.vcxproj
+        │   ├── upnpc-static.vcxproj.filters
+        │   └── upnpc-static_vs2010.vcxproj
+        ├── pymoduletest3.py
+        ├── pymoduletest.py
+        ├── README
+        ├── setupmingw32.py
+        ├── setup.py
+        ├── src
+        │   ├── addr_is_reserved.c
+        │   ├── addr_is_reserved.h
+        │   ├── codelength.h
+        │   ├── connecthostport.c
+        │   ├── connecthostport.h
+        │   ├── igd_desc_parse.c
+        │   ├── igd_desc_parse.h
+        │   ├── listdevices.c
+        │   ├── minihttptestserver.c
+        │   ├── minisoap.c
+        │   ├── minisoap.h
+        │   ├── minissdpc.c
+        │   ├── minissdpc.h
+        │   ├── miniupnpc.c
+        │   ├── miniupnpc_declspec.h
+        │   ├── miniupnpc.h
+        │   ├── miniupnpcmodule.c
+        │   ├── miniupnpc_socketdef.h
+        │   ├── miniupnpcstrings.h
+        │   ├── miniupnpctypes.h
+        │   ├── miniwget.c
+        │   ├── miniwget.h
+        │   ├── miniwget_private.h
+        │   ├── minixml.c
+        │   ├── minixml.h
+        │   ├── minixmlvalid.c
+        │   ├── portlistingparse.c
+        │   ├── portlistingparse.h
+        │   ├── receivedata.c
+        │   ├── receivedata.h
+        │   ├── testaddr_is_reserved.c
+        │   ├── testigddescparse.c
+        │   ├── testminiwget.c
+        │   ├── testminixml.c
+        │   ├── testportlistingparse.c
+        │   ├── testupnpreplyparse.c
+        │   ├── upnpc.c
+        │   ├── upnpcommands.c
+        │   ├── upnpcommands.h
+        │   ├── upnpdev.c
+        │   ├── upnpdev.h
+        │   ├── upnperrors.c
+        │   ├── upnperrors.h
+        │   ├── upnpreplyparse.c
+        │   ├── upnpreplyparse.h
+        │   └── win32_snprintf.h
+        ├── testdesc
+        │   ├── linksys_WAG200G_desc.values
+        │   ├── linksys_WAG200G_desc.xml
+        │   ├── new_LiveBox_desc.values
+        │   └── new_LiveBox_desc.xml
+        ├── testminiwget.sh
+        ├── testreplyparse
+        │   ├── DeletePortMapping.namevalue
+        │   ├── DeletePortMapping.xml
+        │   ├── GetExternalIPAddress.namevalue
+        │   ├── GetExternalIPAddress.xml
+        │   ├── GetSpecificPortMappingEntryReq.namevalue
+        │   ├── GetSpecificPortMappingEntryReq.xml
+        │   ├── GetSpecificPortMappingEntryResp.namevalue
+        │   ├── GetSpecificPortMappingEntryResp.xml
+        │   ├── invalid.namevalue
+        │   ├── invalid.xml
+        │   ├── readme.txt
+        │   ├── SetDefaultConnectionService.namevalue
+        │   └── SetDefaultConnectionService.xml
+        ├── testupnpigd.py
+        ├── testupnpreplyparse.sh
+        ├── updateminiupnpcstrings.sh
+        ├── VERSION
+        └── wingenminiupnpcstrings.c
 
-29 directories, 92 files
+44 directories, 272 files
