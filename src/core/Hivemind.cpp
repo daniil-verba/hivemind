@@ -190,7 +190,7 @@ bool Hivemind::registerName(const std::string& name) {
     registry->addUser("", name, m_myNodeIdStr, ipToUse, m_myPort);
     m_myUsername = name;
     
-    // Если маяк настроен — отправляем регистрацию на маяк
+    // Если маяк настроен — отправляем регистрацию на маяк и ЖДЁМ ОТВЕТА
     if (beaconClient->isConfigured()) {
         std::cout << "[Hivemind] Sending registration to beacon..." << std::endl;
         hivemind::NodeInfo info{};
@@ -217,11 +217,23 @@ bool Hivemind::registerName(const std::string& name) {
                 }
             });
         
-        int timeout = 50;
+        // Ждём ответа от маяка (макс 5 секунд)
+        std::cout << "[Hivemind] Waiting for beacon response..." << std::endl;
+        int timeout = 50; // 50 * 100ms = 5 секунд
         while (!completed && timeout-- > 0) {
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }
-        return completed && result;
+        
+        if (!completed) {
+            std::cerr << "[Hivemind] ✗ Beacon timeout — no response from server" << std::endl;
+            std::cerr << "[Hivemind] Possible reasons: firewall on VPS, server not running, packet lost" << std::endl;
+            return false;
+        }
+        
+        if (result) {
+            std::cout << "[Hivemind] ✓ Registration complete!" << std::endl;
+        }
+        return result;
     }
     
     return true;
@@ -274,15 +286,26 @@ bool Hivemind::requestUsersPack() {
         return false;
     }
     
+    std::cout << "[Hivemind] =========================================" << std::endl;
     std::cout << "[Hivemind] Requesting users.pack from beacon..." << std::endl;
+    std::cout << "[Hivemind] Beacon: " << beaconClient->getBeaconIp() << ":" << beaconClient->getBeaconPort() << std::endl;
+    std::cout << "[Hivemind] My NodeID: " << m_myNodeIdStr << std::endl;
+    std::cout << "[Hivemind] My Public IP: " << m_myPublicIP << std::endl;
+    std::cout << "[Hivemind] My Port: " << m_myPort << std::endl;
     
     auto data = hivemind::createRequestUsersPackPacket(m_myNodeIdStr);
+    std::cout << "[Hivemind] Packet size: " << data.size() << " bytes" << std::endl;
+    
     bool sent = transport->sendTo(beaconClient->getBeaconIp(), beaconClient->getBeaconPort(),
                                    std::string(data.begin(), data.end()));
     
     if (sent) {
-        std::cout << "[Hivemind] Users pack request sent" << std::endl;
+        std::cout << "[Hivemind] ✓ Users pack request SENT to beacon" << std::endl;
+        std::cout << "[Hivemind] Waiting for response... (timeout 5s)" << std::endl;
+    } else {
+        std::cerr << "[Hivemind] ✗ FAILED to send request!" << std::endl;
     }
+    std::cout << "[Hivemind] =========================================" << std::endl;
     return sent;
 }
 

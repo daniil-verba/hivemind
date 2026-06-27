@@ -50,18 +50,32 @@ void Transport::stop() {
 }
 
 bool Transport::sendTo(const std::string& ip, uint16_t port, const std::string& message) {
-    if (sockfd < 0) return false;
+    if (sockfd < 0) {
+        std::cerr << "[Transport] sendTo failed: socket not initialized" << std::endl;
+        return false;
+    }
     
     struct sockaddr_in addr;
     memset(&addr, 0, sizeof(addr));
     addr.sin_family = AF_INET;
     addr.sin_port = htons(port);
-    inet_pton(AF_INET, ip.c_str(), &addr.sin_addr);
+    
+    if (inet_pton(AF_INET, ip.c_str(), &addr.sin_addr) <= 0) {
+        std::cerr << "[Transport] sendTo failed: invalid IP " << ip << std::endl;
+        return false;
+    }
     
     int sent = sendto(sockfd, message.c_str(), message.size(), 0,
                       (struct sockaddr*)&addr, sizeof(addr));
     
-    return sent == static_cast<int>(message.size());
+    if (sent == static_cast<int>(message.size())) {
+        std::cout << "[Transport] Sent " << sent << " bytes to " << ip << ":" << port << std::endl;
+        return true;
+    } else {
+        std::cerr << "[Transport] sendTo failed: sent " << sent << " of " << message.size() 
+                  << " bytes to " << ip << ":" << port << " (errno: " << errno << ")" << std::endl;
+        return false;
+    }
 }
 
 bool Transport::receive(Message& msg) {

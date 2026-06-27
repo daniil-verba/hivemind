@@ -309,6 +309,8 @@ private:
         struct sockaddr_in from_addr;
         socklen_t from_len = sizeof(from_addr);
         
+        std::cout << "[BeaconServer] Receive loop started, waiting for packets..." << std::endl;
+        
         while (m_running) {
             fd_set fds;
             FD_ZERO(&fds);
@@ -331,10 +333,18 @@ private:
             inet_ntop(AF_INET, &from_addr.sin_addr, ip_str, INET_ADDRSTRLEN);
             uint16_t port = ntohs(from_addr.sin_port);
             
+            // ЛОГИРУЕМ ВСЕ ВХОДЯЩИЕ ПАКЕТЫ
+            std::cout << "[BeaconServer] >>> RECEIVED " << received << " bytes from " 
+                      << ip_str << ":" << port << std::endl;
+            
             Packet pkt;
             if (!Packet::deserialize(reinterpret_cast<uint8_t*>(buffer), received, pkt)) {
+                std::cout << "[BeaconServer]   Failed to deserialize packet" << std::endl;
                 continue;
             }
+            
+            std::cout << "[BeaconServer]   Packet type: " << static_cast<int>(pkt.type) 
+                      << " (size: " << pkt.payload.size() << ")" << std::endl;
             
             processPacket(pkt, ip_str, port, from_addr);
         }
@@ -343,10 +353,13 @@ private:
     void processPacket(const Packet& pkt, const std::string& fromIp, uint16_t fromPort,
                        const struct sockaddr_in& fromAddr) {
         switch (pkt.type) {
-            // === РЕГИСТРАЦИЯ ПОЛЬЗОВАТЕЛЯ ===
+            /// === РЕГИСТРАЦИЯ ПОЛЬЗОВАТЕЛЯ ===
             case MsgType::REGISTER_USERNAME: {
+                std::cout << "[BeaconServer] >>> GOT REGISTER_USERNAME from " << fromIp << ":" << fromPort << std::endl;
+                std::cout << "[BeaconServer]   Payload size: " << pkt.payload.size() << " bytes" << std::endl;
+                
                 if (pkt.payload.size() < 32 + 158) {
-                    std::cerr << "[BeaconServer] Invalid REGISTER_USERNAME packet" << std::endl;
+                    std::cerr << "[BeaconServer] Invalid REGISTER_USERNAME packet (too small: " << pkt.payload.size() << ")" << std::endl;
                     return;
                 }
                 
